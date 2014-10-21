@@ -15,7 +15,8 @@
     "url": "https://github.com/gcanti/uvdom/issues"
   },
   "homepage": "https://github.com/gcanti/uvdom",
-  "devDependencies": {
+  "dependencies": {
+    "react": "~0.11.2"
   },
   "tags": [
     "VDOM"
