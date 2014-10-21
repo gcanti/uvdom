@@ -27,6 +27,7 @@ function addEvents(attrs, events) {
 }
 
 function mixin(x, y) {
+  if (!y) { return x; }
   for (var k in y) {
     if (y.hasOwnProperty(k)) { x[k] = y[k]; }
   }
@@ -43,13 +44,13 @@ function clone(x) {
 // toReactElement
 //
 
-// toReactElement: VDOM -> ReactElement
-function toReactElement(vdom) {
+// toElement: VDOM -> ReactElement
+function toElement(vdom, isReferenceable) {
   if (Array.isArray(vdom)) {
     if (vdom.length === 1) {
-      return toReactElement(vdom[0]);
+      return toElement(vdom[0]);
     }
-    return vdom.map(toReactElement);
+    return vdom.map(toElement);
   } else if (typeof vdom === 'object') {
     var tag = vdom.tag;
     if (typeof tag === 'string') {
@@ -59,18 +60,32 @@ function toReactElement(vdom) {
     if (attrs.className) {
       attrs.className = cx(attrs.className);
     }
-    if (vdom.ref) {
-      attrs.ref = vdom.ref;
-    }
     if (vdom.key) {
       attrs.key = vdom.key;
     }
+    if (vdom.ref) {
+      attrs.ref = vdom.ref;
+    }
     addEvents(attrs, vdom.events);
-    var children = toReactElement(vdom.children);
-    // use `apply` to avoid React warnings
-    return React.createElement.apply(React, [tag, attrs].concat(children));
+    var children = toElement(vdom.children);
+    return isReferenceable ? function (ref) {
+      return tag(mixin(attrs, ref), children);
+    } : tag(attrs, children);
   }
   return vdom;
 }
 
-module.exports = toReactElement;
+function toClass(vdom, config) {
+  var Element = toElement(vdom);
+  config = mixin({
+    render: function () {
+      return Element;
+    }
+  }, config);
+  return React.createClass(config);
+}
+
+module.exports = {
+  toElement: toElement,
+  toClass: toClass
+};
