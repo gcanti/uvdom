@@ -1,17 +1,27 @@
-Work in progress...
-
-# Formal Type Definitions
+# UVDOM Formal Type Definitions
 
     type Nil = null | undefined
 
+    type Tag = enum 'div', 'strong', 'em', etc..
+
     type Child = string | Node
 
+    type Event = enum 'click', 'change', etc...
+
     type Node = {
-      tag:        enum 'div', 'strong', 'em', etc..,
+      tag:        Tag
       attrs:      Nil | object,
-      className:  Nil | string | Array<string> | Dictionary<boolean>,
-      events:     Nil | Dictionary<function>,
+      children:   Nil | Child | Array<Child>,
+
+      // extensions
+      events:     Nil | Dictionary<Event, Nil | function>,
       key:        Nil | string | number,
-      children:   Nil | Child | Array<Child>
+      ref:        Nil | string | number
     }
+
+    type attrs.style = Nil | object
+
+    type attrs.className = Nil | Dictionary<string, boolean>
+
+    type VDOM = Node | Array<Node>
 
