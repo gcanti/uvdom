@@ -6,26 +6,6 @@ var React = require('react');
 // helpers
 //
 
-// transforms an hash of classes to a string
-function cx(classNames) {
-  return Object.keys(classNames).filter(function(className) {
-    return classNames[className];
-  }).join(' ');
-}
-
-function toEvent(e) {
-  return 'on' + e.substring(0, 1).toUpperCase() + e.substring(1);
-}
-
-function addEvents(attrs, events) {
-  if (!events) { return; }
-  for (var name in events) {
-    if (events.hasOwnProperty(name)) {
-      attrs[toEvent(name)] = events[name];
-    }
-  }
-}
-
 function mixin(x, y) {
   if (!y) { return x; }
   for (var k in y) {
@@ -34,10 +14,33 @@ function mixin(x, y) {
   return x;
 }
 
-// useful to preserve the original hash
 function clone(x) {
   if (!x) { return {}; }
   return mixin({}, x);
+}
+
+// transforms an hash of classes to a string
+function cx(classNames) {
+  return Object.keys(classNames).filter(function(className) {
+    return classNames[className];
+  }).join(' ');
+}
+
+// transforms a generic event name to a React event name
+// click -> onClick
+// blur -> onBlur
+function toReactEventName(name) {
+  return 'on' + name.substring(0, 1).toUpperCase() + name.substring(1);
+}
+
+// side effect: mixin the events hash with the attrs hash
+function mixinEvents(events, attrs) {
+  if (!events) { return; }
+  for (var name in events) {
+    if (events.hasOwnProperty(name)) {
+      attrs[toReactEventName(name)] = events[name];
+    }
+  }
 }
 
 //
@@ -45,7 +48,7 @@ function clone(x) {
 //
 
 // toElement: VDOM -> ReactElement
-function toElement(vdom, isReferenceable) {
+function toElement(vdom) {
   if (Array.isArray(vdom)) {
     if (vdom.length === 1) {
       return toElement(vdom[0]);
@@ -66,15 +69,14 @@ function toElement(vdom, isReferenceable) {
     if (vdom.ref) {
       attrs.ref = vdom.ref;
     }
-    addEvents(attrs, vdom.events);
+    mixinEvents(vdom.events, attrs);
     var children = toElement(vdom.children);
-    return isReferenceable ? function (ref) {
-      return tag(mixin(attrs, ref), children);
-    } : tag(attrs, children);
+    return tag.apply(null, [attrs].concat(children));
   }
   return vdom;
 }
 
+// toClass: VDOM -> ReactClass
 function toClass(vdom, config) {
   var Element = toElement(vdom);
   config = mixin({
