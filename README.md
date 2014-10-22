@@ -1,27 +1,44 @@
-# UVDOM Formal Type Definitions
+# Formal Type Definitions
 
     type Nil = null | undefined
 
-    type Tag = enum 'div', 'strong', 'em', etc..
+    type Node = string | Tag | Component
 
-    type Child = string | Node
+    type Child = Nil | Node
 
-    type Event = enum 'click', 'change', etc...
+    type Children = Child | Array<Child>
 
-    type Node = {
-      tag:        Tag
-      attrs:      Nil | object,
-      children:   Nil | Child | Array<Child>,
+    type TagName = enum 'div', 'strong', 'em', etc..
 
-      // extensions
-      events:     Nil | Dictionary<Event, Nil | function>,
-      key:        Nil | string | number,
-      ref:        Nil | string | number
+    type EventName = enum 'click', 'change', etc...
+
+    type Events = Dictionary<EventName, function>
+
+    type Tag = {
+      tag:      TagName,
+      attrs:    Nil | object,
+      children: Children,
+      events:   Nil | Events,
+      key:      Nil | string | number,
+      ref:      Nil | string | number
     }
 
     type attrs.style = Nil | object
 
     type attrs.className = Nil | Dictionary<string, boolean>
+
+    type Component = {
+      ctor:     function,
+      config:   object,
+      children: Children,
+      events:   Nil | Events,
+      key:      Nil | string | number,
+      ref:      Nil | string | number,
+      state:    Nil | object,
+      methods:  Dictionary<string, function>
+    }
+
+    ctor: (config, children, events, key, ref, state) -> VDOM
 
     type VDOM = Node | Array<Node>
 
