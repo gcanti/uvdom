@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/es6-shim/0.18.0/es6-shim.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/es6-shim/0.18.0/es6-sham.min.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.5.0/buttons-min.css"/>
+    <title>Universal VDOM demo</title>
+    <style>
+    .fixture {
+      margin-top: 20px;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="md-col-12">
+          <h1>UVDOM compilation demo</h1>
+          <p class="lead">The same view is converted into React, Mithril and mercury with two different styles applied (Bootstrap and Pure)</p>
+          <hr/>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-3">
+          <h2>React</h2>
+        </div>
+        <div class="col-md-3">
+          <h2>Mithril</h2>
+        </div>
+        <div class="col-md-3">
+          <h2>Mercury</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <h2>Bootstrap</h2>
+        </div>
+        <div class="col-md-3">
+          <div class="fixture" id="bootstrap-react"></div>
+        </div>
+        <div class="col-md-3">
+          <div class="fixture" id="bootstrap-mithril"></div>
+        </div>
+        <div class="col-md-3">
+          <div class="fixture" id="bootstrap-mercury"></div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <h2>Pure</h2>
+        </div>
+        <div class="col-md-3">
+          <div class="fixture" id="pure-react"></div>
+        </div>
+        <div class="col-md-3">
+          <div class="fixture" id="pure-mithril"></div>
+        </div>
+        <div class="col-md-3">
+          <div class="fixture" id="pure-mercury"></div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="md-col-12">
+          <hr/>
+          <h2>Source code</h2>
+          <pre>
+// button: object -> string -> UVDOM (a view without styling, the output of my library)
+function button(style) {
+  return function (caption) {
+    return {
+      tag: 'button',
+      attrs: {className: style},
+      children: caption
+    };
+  };
+}
+
+// boostrap: string -> object (Bootstrap 3 style)
+function bootstrap(type) {
+  var style = {btn: true};
+  style['btn-' + type] = true;
+  return style;
+}
+
+// boostrap: string -> object (Pure css style)
+function pure(type) {
+  var style = {'pure-button': true};
+  style['pure-button-' + type] = true;
+  return style;
+}
+
+// bootstrapButton: string -> string -> VDOM
+var bootstrapButton = compose(button, bootstrap);
+// pureButton: string -> string -> VDOM
+var pureButton = compose(button, pure);
+
+var TYPE = 'primary';
+var CAPTION = 'Primary button';
+var bsButton = bootstrapButton(TYPE)(CAPTION);
+var prButton = pureButton(TYPE)(CAPTION);
+
+// React
+React.render(toReact(bsButton), document.getElementById('bootstrap-react'));
+React.render(toReact(prButton), document.getElementById('pure-react'));
+
+// Mithril
+m.render(document.getElementById('bootstrap-mithril'), toMithril(bsButton));
+m.render(document.getElementById('pure-mithril'), toMithril(prButton));
+
+// Mithril
+document.getElementById('bootstrap-mercury').appendChild(createElement(toMercury(bsButton)));
+document.getElementById('pure-mercury').appendChild(createElement(toMercury(prButton)));
+          </pre>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript" src="demo.js"></script>
+  </body>
+</html>
+

@@ -4,6 +4,7 @@
   "description": "Universal Virtual DOM",
   "main": "index.js",
   "scripts": {
+    "examples-views": "watchify examples/views/demo.src.js -o examples/views/demo.js -v"
   },
   "repository": {
     "type": "git",
@@ -15,8 +16,13 @@
     "url": "https://github.com/gcanti/uvdom/issues"
   },
   "homepage": "https://github.com/gcanti/uvdom",
+  "devDependencies": {
+    "mithril": "~0.1.22",
+    "vtree": "~0.0.21",
+    "vdom": "~0.0.21"
+  },
   "dependencies": {
-    "react": "~0.11.2"
+    "react": "~0.12.0"
   },
   "tags": [
     "VDOM"
