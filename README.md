@@ -1,44 +1,41 @@
 # Formal Type Definitions
 
-    type Nil = null | undefined
+```js
+type UVDOM = Node | Array<Node> // a tree or a forest
 
-    type Node = string | Tag | Component
+type Nil = null | undefined
 
-    type Child = Nil | Node
+type Node = {
+  tag: string
+  attrs: Nil | {
+    style:      Nil | object<string, any>,
+    className:  Nil | object<string, boolean>,
+    xmlns:      Nil | string, // namespaces
+    ...
+  },
+  children: Nil | string | UVDOM
+}
+```
 
-    type Children = Child | Array<Child>
+**Note**. `tag` is a string since the browser actually allows any name, and Web Components will use this fact for people to write custom names. `className` is a dictionary `string -> boolean` since it's easy to patch and to manage (like React `cx(className)`).
 
-    type TagName = enum 'div', 'strong', 'em', etc..
+# Views
 
-    type EventName = enum 'click', 'change', etc...
+Let `JSON` be the set of all the JSON data structures and `VDOM` a virtual DOM implementation, then we call a *view* a [pure](http://en.wikipedia.org/wiki/Pure_function) function such that `view: JSON -> VDOM`, that is a function accepting a JSON state and returning a virtual DOM.
 
-    type Events = Dictionary<EventName, function>
+**Definition**. A `VDOM`-*view system* is a pair `(VDOM, View)` where `VDOM` is a virtual DOM implementation
+and `View` is the set of all the related views. Let's call *universal view system* the `UVDOM`-view system.
 
-    type Tag = {
-      tag:      TagName,
-      attrs:    Nil | object,
-      children: Children,
-      events:   Nil | Events,
-      key:      Nil | string | number,
-      ref:      Nil | string | number
+```js
+// a simple view, outputs a bolded link
+function anchorView(state) {
+  return {
+    tag: 'a',
+    attrs: {href: state.url},
+    children: {
+      tag: 'b',
+      children: state.text
     }
-
-    type attrs.style = Nil | object
-
-    type attrs.className = Nil | Dictionary<string, boolean>
-
-    type Component = {
-      ctor:     function,
-      config:   object,
-      children: Children,
-      events:   Nil | Events,
-      key:      Nil | string | number,
-      ref:      Nil | string | number,
-      state:    Nil | object,
-      methods:  Dictionary<string, function>
-    }
-
-    ctor: (config, children, events, key, ref, state) -> VDOM
-
-    type VDOM = Node | Array<Node>
-
+  };
+}
+```
