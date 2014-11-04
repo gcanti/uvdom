@@ -13,6 +13,10 @@ type Node = {
     xmlns:      Nil | string, // namespaces
     ...
   },
+  events: Nil | {
+    click: function () {}
+    ...
+  },
   children: Nil | string | UVDOM
 }
 ```
@@ -29,7 +33,7 @@ DOM is statefull:
 
 Solution: Reuse Nodes
 
-# Points to solve
+# General issues
 
 - server side rendering
 - attach events in the client when rendering is server side
