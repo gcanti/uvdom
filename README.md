@@ -19,23 +19,19 @@ type Node = {
 
 **Note**. `tag` is a string since the browser actually allows any name, and Web Components will use this fact for people to write custom names. `className` is a dictionary `string -> boolean` since it's easy to patch and to manage (like React `cx(className)`).
 
-# Views
+# Issues with the DOM
 
-Let `JSON` be the set of all the JSON data structures and `VDOM` a virtual DOM implementation, then we call a *view* a [pure](http://en.wikipedia.org/wiki/Pure_function) function such that `view: JSON -> VDOM`, that is a function accepting a JSON state and returning a virtual DOM.
+DOM is statefull:
 
-**Definition**. A `VDOM`-*view system* is a pair `(VDOM, View)` where `VDOM` is a virtual DOM implementation
-and `View` is the set of all the related views. Let's call *universal view system* the `UVDOM`-view system.
+- Input focus and selection
+- Scroll position
+- iframe
 
-```js
-// a simple view, outputs a bolded link
-function anchorView(state) {
-  return {
-    tag: 'a',
-    attrs: {href: state.url},
-    children: {
-      tag: 'b',
-      children: state.text
-    }
-  };
-}
-```
+Solution: Reuse Nodes
+
+# Points to solve
+
+- server side rendering
+- attach events in the client when rendering is server side
+- render + event attach in the client
+- state transaction and event detach

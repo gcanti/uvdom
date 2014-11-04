@@ -4,37 +4,41 @@ var util = require('./util');
 var mixin = util.mixin;
 var cx = util.cx;
 
-// toVDOM: vnode -> DOM
-function toVDOM(vnode) {
-  if (Array.isArray(vnode)) {
-    return vnode.map(toVDOM); 
-  } else if (typeof vnode === 'object') {
+// toDOM: vnode -> DOM
+function toDOM(vnode) {
+
+  if (Array.isArray(vnode)) { 
+    return vnode.map(toVDOM);
+  } 
+
+  if (typeof vnode === 'object') {
     
+    var name;
     var node = document.createElement(vnode.tag);
     
     // attrs
     if (vnode.attrs) {
-      for (var attr in vnode.attrs) {
-        if (attr === 'className') {
-          node[attr] = cx(vnode.attrs[attr]);
-        } else if (attr === 'style') {
-          mixin(node.style, vnode.attrs[attr]);
+      for (name in vnode.attrs) {
+        if (name === 'className') {
+          node[name] = cx(vnode.attrs[name]);
+        } else if (name === 'style') {
+          mixin(node.style, vnode.attrs[name]);
         } else {
-          node.setAttribute(attr, vnode.attrs[attr]);
+          node.setAttribute(name, vnode.attrs[name]);
         }
       }
     }
     
     // events
     if (vnode.events != null) {
-      for (var name in vnode.events) {
+      for (name in vnode.events) {
         node.addEventListener(name, vnode.events[name], false);
       }
     }
     
     // children
     if (vnode.children != null) {
-      var children = toVDOM(vnode.children);
+      var children = toDOM(vnode.children);
       if (Array.isArray(children)) {
         for (var i = 0, len = children.length ; i < len ; i++ ) {
           node.appendChild(children[i]);
@@ -46,9 +50,10 @@ function toVDOM(vnode) {
 
     return node;
   }
+  
   return document.createTextNode(vnode);
 }
 
 module.exports = {
-  toVDOM: toVDOM
+  toDOM: toDOM
 };

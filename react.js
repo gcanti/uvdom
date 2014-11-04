@@ -16,11 +16,14 @@ function camelizeEvent(name) {
   return 'on' + name.substring(0, 1).toUpperCase() + name.substring(1);
 }
 
-// toVDOM: vnode -> VDOM (ReactElement)
-function toVDOM(vnode) {
+// toElement: vnode -> ReactElement
+function toElement(vnode) {
+  
   if (Array.isArray(vnode)) {
-    return vnode.length === 1 ? toVDOM(vnode[0]) : vnode.map(toVDOM); 
-  } else if (typeof vnode === 'object') {
+    return vnode.length === 1 ? toElement(vnode[0]) : vnode.map(toElement);
+  }
+
+  if (typeof vnode === 'object') {
     
     var tag = vnode.tag;
     if (typeof tag === 'string') { tag = React.DOM[tag]; }
@@ -39,25 +42,14 @@ function toVDOM(vnode) {
     }
 
     // children
-    var children = toVDOM(vnode.children);
+    var children = toElement(vnode.children);
 
     return tag.apply(null, [attrs].concat(children));
   }
+
   return vnode;
 }
 
-// toClass: vnode -> ReactClass
-function toClass(vnode, config) {
-  var vdom = toVDOM(vnode);
-  config = mixin({
-    render: function () {
-      return vdom;
-    }
-  }, config);
-  return React.createClass(config);
-}
-
 module.exports = {
-  toVDOM: toVDOM,
-  toClass: toClass
+  toElement: toElement
 };
