@@ -8,7 +8,7 @@ function mixin(x, y) {
   return x;
 }
 
-// transforms an hash of classes to a string
+// transforms a hash of classes to a string
 function cx(classNames) {
   return Object.keys(classNames).filter(function(className) {
     return classNames[className];
