@@ -1,7 +1,6 @@
 'use strict';
 
-var util = require('./util');
-var cx = util.cx;
+var cx = require('./util').cx;
 
 //
 // helpers
@@ -36,14 +35,14 @@ function escaper(match) {
 }
 
 function escapeHTML(text) {
-  return text.replace(ESCAPE_REGEX, escaper);
+  return String(text).replace(ESCAPE_REGEX, escaper);
 }
 
 //
 // building blocks
 //
 
-var ATTR_NAME = 'data-id'; // in React the value id 'data-reactid'
+var ATTR_NAME = 'data-id'; // in React the value is 'data-reactid'
 
 // addHookId: UVDOM -> UVDOM
 function addHookId(x, id) {
@@ -127,6 +126,7 @@ function attach(hooks, node) {
       $(node).on(eventName, '[' + ATTR_NAME + '="' + id + '"]', eventHandler);
     }
   }
+  node.hooks = hooks; // store hooks for unmounting
 }
 
 // detach: Node -> IO DOM
@@ -159,7 +159,6 @@ function render(uvdom, node) {
     node.innerHTML = toHTML(uvdom); // render HTML
   }
   attach(hooks, node);              // attach events to node
-  node.hooks = hooks;               // store hooks for unmounting
 }
 
 // client side unmounting (React.unmountComponentAtNode)

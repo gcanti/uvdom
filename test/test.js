@@ -1,59 +1,63 @@
 "use strict";
 
-var assert = require('assert');
-var html = require('../html');
+var React = require('react');
+var test = require('tape');
+var compile = require('../react').compile;
 
-//
-// setup
-//
+function html(uvdom) {
+  return React.renderToStaticMarkup(compile(uvdom));
+}
 
-var ok = function (x) { assert.strictEqual(true, x); };
-var eq = assert.deepEqual;
-
-describe('html', function () {
-
-  describe('addHookId', function () {
-
-    var addHookId = html.addHookId;
-
-    it('should add an id to a node', function () {
-      var uvdom = {tag: 'div'};
-      uvdom = addHookId(uvdom);
-      eq(uvdom, {tag: 'div', attrs: {'data-id': '.0'}});
-    });
-
-    it('should add an id to a forest', function () {
-      var uvdom = [{tag: 'div'}, {tag: 'a'}];
-      uvdom = addHookId(uvdom);
-      eq(uvdom, [
-        {tag: 'div', attrs: {'data-id': '.0'}},
-        {tag: 'a', attrs: {'data-id': '.1'}}
-      ]);
-    });
-
-    it('should add an id to a nested node', function () {
-      var uvdom = {tag: 'div', children: {tag: 'a'}};
-      uvdom = addHookId(uvdom);
-      eq(uvdom, {
-        tag: 'div', 
-        attrs: {'data-id': '.0'}, 
-        children: {tag: 'a', attrs: {'data-id': '.0.0'}}
-      });
-    });
-
-    it('should add an id to a nested forest', function () {
-      var uvdom = {tag: 'div', children: [{tag: 'a'}, {tag: 'b'}]};
-      uvdom = addHookId(uvdom);
-      eq(uvdom, {
-        tag: 'div', 
-        attrs: {'data-id': '.0'}, 
-        children: [
-          {tag: 'a', attrs: {'data-id': '.0.0'}},
-          {tag: 'b', attrs: {'data-id': '.0.1'}}
-        ]
-      });
-    });
-  });
-
+test('rendering', function (tape) {
+  tape.plan(13);
+  // tag
+  tape.deepEqual(html({tag: 'div'}), '<div></div>');
+  // attrs
+  tape.deepEqual(html({tag: 'div', attrs: null}), '<div></div>');
+  tape.deepEqual(html({tag: 'div', attrs: {}}), '<div></div>');
+  tape.deepEqual(html({tag: 'div', attrs: {id: 'myid'}}), '<div id="myid"></div>');
+  // style
+  tape.deepEqual(html({tag: 'div', attrs: {style: {textAlign: 'center'}}}), '<div style="text-align:center;"></div>');
+  // class
+  tape.deepEqual(html({tag: 'div', attrs: {className: {'myclass': true}}}), '<div class="myclass"></div>');
+  tape.deepEqual(html({tag: 'div', attrs: {className: {'myclass1': true, 'myclass2': true}}}), '<div class="myclass1 myclass2"></div>');
+  tape.deepEqual(html({tag: 'div', attrs: {className: {'myclass': false}}}), '<div class=""></div>');
+  // children
+  tape.deepEqual(html({tag: 'div', children: 'a'}), '<div>a</div>');
+  tape.deepEqual(html({tag: 'div', children: ['a']}), '<div>a</div>');
+  tape.deepEqual(html({tag: 'div', children: ['a', 'b']}), '<div>ab</div>');
+  tape.deepEqual(html({tag: 'div', children: ['a', ' ', 'b']}), '<div>a b</div>');
+  tape.deepEqual(html({tag: 'div', children: ['a', ['b', 'c']]}), '<div>abc</div>');
 });
 
+if (typeof window !== 'undefined') {
+
+  test('events', function (tape) {
+    tape.plan(1);
+    var node = document.createElement('div');
+    document.body.appendChild(node);
+    var el = compile({
+      tag: 'div',
+      children: [
+        {
+          tag: 'span',
+          attrs: {id: 'counter'}
+        },
+        {
+          tag: 'button',
+          attrs: {id: 'mybutton'},
+          events: {
+            click: function () {
+              document.getElementById('counter').innerText = '1';
+            }
+          },
+          children: 'Click me'
+        }
+      ]
+    });
+    React.render(el, node);
+    document.getElementById('mybutton').click();
+    tape.deepEqual(document.getElementById('counter').innerText, '1');
+  });
+
+}

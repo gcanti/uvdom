@@ -1,12 +1,11 @@
 {
   "name": "uvdom",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Universal Virtual DOM",
   "main": "index.js",
   "scripts": {
-    "dev": "watchify -t reactify dev/dev.jsx -o dev/dev.js -v",
-    "bench": "watchify -t reactify dev/bench.src.js -o dev/bench.js -v",
-    "examples-views": "watchify examples/views/demo.src.js -o examples/views/demo.js -v"
+    "test": "node test/test",
+    "test-browser": "browserify test/test | testling -u"
   },
   "repository": {
     "type": "git",
@@ -18,14 +17,12 @@
     "url": "https://github.com/gcanti/uvdom/issues"
   },
   "homepage": "https://github.com/gcanti/uvdom",
-  "devDependencies": {
-    "mithril": "~0.1.22",
-    "vtree": "~0.0.21",
-    "vdom": "~0.0.21",
-    "reactify": "~0.15.2"
-  },
   "dependencies": {
-    "react": "~0.12.0"
+    "react": "^0.12.1"
+  },
+  "devDependencies": {
+    "tape": "^3.0.3",
+    "testling": "^1.7.1"
   },
   "tags": [
     "VDOM"

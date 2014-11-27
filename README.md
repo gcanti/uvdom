@@ -1,9 +1,9 @@
-# Formal Type Definitions
+This library defines a universal representation for a virtual DOM which can be later compiled into serverl targets like React.js v0.12.1.
+
+# UVDOM Formal Type Definition
 
 ```js
 type UVDOM = Node | Array<Node> // a tree or a forest
-
-type Nil = null | undefined
 
 type Node = {
   tag: string
@@ -14,28 +14,47 @@ type Node = {
     ...
   },
   events: Nil | {
-    click: function () {}
+    click: function
     ...
   },
   children: Nil | string | UVDOM
 }
+
+type Nil = null | undefined
 ```
 
-**Note**. `tag` is a string since the browser actually allows any name, and Web Components will use this fact for people to write custom names. `className` is a dictionary `string -> boolean` since it's easy to patch and to manage (like React `cx(className)`).
+**Note**. `tag` is a string since the browser actually allows any name, and Web Components will use this fact for people to write custom names.
 
-# Issues with the DOM
+**Note**. `className` is a dictionary `string -> boolean` since it's easy to patch and to manage (kind of React's `cx(className)`).
 
-DOM is statefull:
+**Note**. In `attrs.style` the css rules are expressed with the JavaScript syntax: e.g. `{textAlign: 'center'}`.
 
-- Input focus and selection
-- Scroll position
-- iframe
+# Example: compiling to React.js
 
-Solution: Reuse Nodes
+```js
+var compile = require('uvdom/react').compile;
 
-# General issues
+var uvdom = {
+  tag: 'div',
+  children: [
+    {
+      tag: 'span',
+      attrs: {id: 'counter'}
+    },
+    {
+      tag: 'button',
+      attrs: {id: 'mybutton'},
+      events: {
+        click: function () {
+          document.getElementById('counter').innerText = '1';
+        }
+      },
+      children: 'Click me'
+    }
+  ]
+};
 
-- server side rendering
-- attach events in the client when rendering is server side
-- render + event attach in the client
-- state transaction and event detach
+var element = compile(uvdom);
+var node = document.getElementById('app');
+console.log(React.render(element, node));
+```
