@@ -30,6 +30,10 @@ function compile(x) {
     return x.length === 1 ? compile(x[0]) : x.map(compile);
   }
   if (typeof x === 'object') {
+    // handle React Element
+    if (React.isValidElement(x)) {
+      return x;
+    }
     // attrs
     var attrs = mixin({}, x.attrs);
     if (attrs.className) { attrs.className = cx(attrs.className); }
@@ -44,7 +48,14 @@ function compile(x) {
     // children
     var children = compile(x.children);
     // build ReactElement
-    return React.createElement.apply(null, [x.tag, attrs].concat(children))
+    return React.createElement.apply(null, [x.tag, attrs].concat(children));
+  }
+  if (typeof x === 'function') {
+    // handle React class
+    if (React.isValidClass(x)) {
+      return React.createFactory(x)();
+    }
+    return compile(x());
   }
   return x;
 }

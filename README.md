@@ -1,4 +1,4 @@
-This library defines a universal representation for a virtual DOM which can be later compiled into serverl targets like React.js v0.12.1.
+This library defines a universal representation for a virtual DOM which can be later compiled into several targets like React.js v0.12.1.
 
 # UVDOM Formal Type Definition
 
