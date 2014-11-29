@@ -17,7 +17,9 @@ type Node = {
     click: function
     ...
   },
-  children: Nil | string | UVDOM
+  children: Nil | string | UVDOM,
+  ref: Nil | string,
+  key: Nil | string | number
 }
 
 type Nil = null | undefined
@@ -25,7 +27,7 @@ type Nil = null | undefined
 
 **Note**. `tag` is a string since the browser actually allows any name, and Web Components will use this fact for people to write custom names.
 
-**Note**. `className` is a dictionary `string -> boolean` since it's easy to patch and to manage (kind of React's `cx(className)`).
+**Note**. `className` is a dictionary `string -> boolean` since it's easy to patch and manage (kind of React's `cx(className)`).
 
 **Note**. In `attrs.style` the css rules are expressed with the JavaScript syntax: e.g. `{textAlign: 'center'}`.
 
@@ -35,23 +37,19 @@ type Nil = null | undefined
 var compile = require('uvdom/react').compile;
 
 var uvdom = {
-  tag: 'div',
-  children: [
-    {
-      tag: 'span',
-      attrs: {id: 'counter'}
-    },
-    {
-      tag: 'button',
-      attrs: {id: 'mybutton'},
-      events: {
-        click: function () {
-          document.getElementById('counter').innerText = '1';
-        }
-      },
-      children: 'Click me'
+  tag: 'button',
+  attrs: {
+    className: { // Bootstrap 3 style
+      'btn': true,
+      'btn-primary': true
     }
-  ]
+  },
+  events: {
+    click: function () {
+      console.log('click');
+    }
+  },
+  children: 'Click me'
 };
 
 var element = compile(uvdom);
