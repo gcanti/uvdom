@@ -5,7 +5,9 @@ This library defines a universal representation for a virtual DOM which can be l
 ```js
 type UVDOM = Node | Array<Node> // a tree or a forest
 
-type Node = {
+type Node = HostNode | UNode
+
+type UNode = {
   tag: string
   attrs: Nil | {
     style:      Nil | object<string, any>,
@@ -18,7 +20,7 @@ type Node = {
     ...
   },
   children: Nil | string | UVDOM,
-  ref: Nil | string,
+  ref: Nil | string | number,
   key: Nil | string | number
 }
 
@@ -39,7 +41,7 @@ var compile = require('uvdom/react').compile;
 var uvdom = {
   tag: 'button',
   attrs: {
-    className: { // Bootstrap 3 style
+    className: {
       'btn': true,
       'btn-primary': true
     }
