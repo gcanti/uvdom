@@ -4,11 +4,11 @@ var React = require('react');
 var test = require('tape');
 var compile = require('../react').compile;
 
-function html(uvdom) {
-  return React.renderToStaticMarkup(compile(uvdom));
+function html(x) {
+  return React.renderToStaticMarkup(compile(x));
 }
 
-test('rendering', function (tape) {
+test('compile uvdom', function (tape) {
   tape.plan(15);
   // tag
   tape.deepEqual(html({tag: 'div'}), '<div></div>');
