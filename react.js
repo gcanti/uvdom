@@ -1,7 +1,7 @@
 'use strict';
 
 var React = require('react');
-var cx = require('react/lib/cx');
+var cx = require('classnames');
 
 // compile: x -> ReactElement
 function compile(x) {
