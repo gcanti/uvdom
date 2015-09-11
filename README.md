@@ -1,4 +1,4 @@
-This library defines a universal representation for a virtual DOM which can be later compiled into several targets like React.js v0.12.1.
+This library defines a universal representation for a virtual DOM which can be later compiled into several targets like React.js.
 
 # UVDOM Formal Type Definition
 
@@ -29,7 +29,7 @@ type Nil = null | undefined
 
 **Note**. `tag` is a string since the browser actually allows any name, and Web Components will use this fact for people to write custom names.
 
-**Note**. `className` is a dictionary `string -> boolean` since it's easy to patch and manage (kind of React's `cx(className)`).
+**Note**. `className` is a dictionary `string -> boolean` since it's easy to patch and manage.
 
 **Note**. In `attrs.style` the css rules are expressed with the JavaScript syntax: e.g. `{textAlign: 'center'}`.
 

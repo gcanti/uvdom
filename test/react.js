@@ -3,9 +3,10 @@
 var React = require('react');
 var test = require('tape');
 var compile = require('../react').compile;
+var ReactDOMServer = require('react/lib/ReactDOMServer');
 
 function html(x) {
-  return React.renderToStaticMarkup(compile(x));
+  return ReactDOMServer.renderToStaticMarkup(compile(x));
 }
 
 test('compile uvdom', function (tape) {
